@@ -1,3 +1,534 @@
-<!DOCTYP html>
+<!DOCTYPE html>
 <html lang="fr">
-<p>Salut tu est sur mon site qui n'a pas de importence !</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>⚠️ NE PAS OUVRIR</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(circle at top left, #ff006e, transparent 35%),
+                radial-gradient(circle at bottom right, #00f5ff, transparent 35%),
+                #080812;
+
+            transition: 0.5s;
+        }
+
+        body.panic {
+            animation: panic 0.15s infinite;
+        }
+
+        @keyframes panic {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(3px, -2px); }
+            50% { transform: translate(-3px, 2px); }
+            75% { transform: translate(2px, 3px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .container {
+            width: min(900px, 92%);
+            margin: 60px auto;
+            padding: 40px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.5),
+                inset 0 0 40px rgba(255,255,255,0.03);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+
+            background: linear-gradient(
+                90deg,
+                #ff006e,
+                #00f5ff,
+                #fff
+            );
+
+            -webkit-background-clip: text;
+            color: transparent;
+
+            animation: title 3s infinite alternate;
+        }
+
+        @keyframes title {
+            from {
+                filter: drop-shadow(0 0 5px #ff006e);
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px #00f5ff);
+            }
+        }
+
+        .subtitle {
+            color: #bbb;
+            font-size: 1.1rem;
+        }
+
+        .status {
+            display: inline-block;
+            margin: 25px 0;
+            padding: 10px 18px;
+
+            border-radius: 50px;
+
+            background: rgba(0,255,120,0.1);
+            border: 1px solid #00ff88;
+
+            color: #00ff88;
+        }
+
+        .status::before {
+            content: "●";
+            margin-right: 8px;
+        }
+
+        .main-button {
+            position: relative;
+
+            margin: 25px;
+            padding: 22px 35px;
+
+            border: none;
+            border-radius: 100px;
+
+            font-size: 1.2rem;
+            font-weight: bold;
+
+            color: white;
+            background: linear-gradient(135deg, #ff006e, #7928ca);
+
+            cursor: pointer;
+
+            box-shadow: 0 15px 40px rgba(255,0,110,0.3);
+
+            transition: 0.2s;
+        }
+
+        .main-button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 20px 60px rgba(255,0,110,0.5);
+        }
+
+        .main-button:active {
+            transform: scale(0.92);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .card {
+            padding: 20px;
+
+            border-radius: 20px;
+
+            background: rgba(0,0,0,0.25);
+        }
+
+        .number {
+            display: block;
+            margin-top: 8px;
+
+            font-size: 2rem;
+            font-weight: bold;
+
+            color: #00f5ff;
+        }
+
+        #message {
+            min-height: 50px;
+            margin: 25px 0;
+
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .achievements {
+            margin-top: 35px;
+            text-align: left;
+        }
+
+        .achievement {
+            margin: 10px 0;
+            padding: 15px;
+
+            border-radius: 15px;
+
+            background: rgba(255,255,255,0.05);
+
+            opacity: 0.35;
+            transition: 0.3s;
+        }
+
+        .achievement.unlocked {
+            opacity: 1;
+            background: rgba(0,255,150,0.12);
+            border: 1px solid rgba(0,255,150,0.3);
+        }
+
+        .secret {
+            margin-top: 40px;
+            color: #555;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #popup {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+
+            max-width: 300px;
+            padding: 18px;
+
+            border-radius: 15px;
+
+            background: #111;
+            border: 1px solid #ff006e;
+
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+
+            transform: translateY(150%);
+            transition: 0.4s;
+
+            z-index: 10;
+        }
+
+        #popup.show {
+            transform: translateY(0);
+        }
+
+        #fugitive {
+            position: fixed;
+
+            padding: 10px 15px;
+
+            border-radius: 50px;
+
+            background: #ff1744;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            display: none;
+
+            z-index: 20;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 15px;
+                margin: 25px auto;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>🤡 RIEN.EXE</h1>
+
+        <p class="subtitle">
+            Le site le plus inutile d'Internet.
+        </p>
+
+        <div class="status">
+            Système inutile opérationnel
+        </div>
+
+        <br>
+
+        <button class="main-button" onclick="uselessClick()">
+            🚨 CLIQUE ICI
+        </button>
+
+        <div id="message">
+            Fais-le. Tu ne risques absolument rien.
+        </div>
+
+        <section class="stats">
+
+            <div class="card">
+                🖱️ Clics
+                <span class="number" id="clicks">0</span>
+            </div>
+
+            <div class="card">
+                🧠 Intelligence
+                <span class="number" id="iq">100</span>
+            </div>
+
+            <div class="card">
+                💰 Argent gagné
+                <span class="number">0 €</span>
+            </div>
+
+        </section>
+
+        <section class="achievements">
+
+            <h2>🏆 Succès inutiles</h2>
+
+            <div class="achievement" id="a1">
+                🔘 Premier clic — Tu as commencé...
+            </div>
+
+            <div class="achievement" id="a10">
+                🔟 10 clics — Tu n'as vraiment rien d'autre à faire.
+            </div>
+
+            <div class="achievement" id="a50">
+                🤡 50 clics — Niveau de clown : maximum.
+            </div>
+
+            <div class="achievement" id="a100">
+                💀 100 clics — Contacte un professionnel.
+            </div>
+
+            <div class="achievement" id="a500">
+                👑 500 clics — TU ES LE ROI DE L'INUTILITÉ.
+            </div>
+
+        </section>
+
+        <div
+            class="secret"
+            onclick="secret()"
+            title="Tu n'es pas censé cliquer ici..."
+        >
+            🤫 Ne clique surtout pas ici.
+        </div>
+
+    </main>
+
+    <div id="popup">
+        <strong>🚨 INFORMATION IMPORTANTE</strong>
+        <br><br>
+        Cette information n'est absolument pas importante.
+    </div>
+
+    <div id="fugitive" onclick="catchButton()">
+        ATTRAPE-MOI 😈
+    </div>
+
+
+    <script>
+
+        let clicks = 0;
+        let iq = 100;
+
+        const messages = [
+            "Excellent. Tu viens de perdre quelques secondes.",
+            "Pourquoi ?",
+            "Le bouton te remercie.",
+            "C'était complètement inutile.",
+            "Tu pensais qu'il allait se passer quelque chose ?",
+            "🤨 Tu recommences vraiment ?",
+            "Ton cerveau vient de demander une explication.",
+            "Erreur 404 : utilité introuvable.",
+            "Bravo. Rien ne s'est passé.",
+            "Le gouvernement est maintenant au courant.",
+            "Tu es officiellement dans la boucle.",
+            "Le bouton commence à t'apprécier.",
+            "Arrête de cliquer. Sérieusement.",
+            "Bon... puisque tu insistes.",
+            "🤡",
+            "Tu pourrais faire quelque chose de productif.",
+            "Mais non. Tu préfères cliquer.",
+            "Respect."
+        ];
+
+        function uselessClick() {
+
+            clicks++;
+
+            document.getElementById("clicks").textContent = clicks;
+
+            iq = Math.max(0, 100 - Math.floor(clicks / 5));
+
+            document.getElementById("iq").textContent = iq;
+
+            const random =
+                messages[Math.floor(Math.random() * messages.length)];
+
+            document.getElementById("message").textContent = random;
+
+            unlockAchievements();
+
+            randomEvent();
+        }
+
+
+        function unlockAchievements() {
+
+            if (clicks >= 1) {
+                document.getElementById("a1")
+                    .classList.add("unlocked");
+            }
+
+            if (clicks >= 10) {
+                document.getElementById("a10")
+                    .classList.add("unlocked");
+            }
+
+            if (clicks >= 50) {
+                document.getElementById("a50")
+                    .classList.add("unlocked");
+            }
+
+            if (clicks >= 100) {
+                document.getElementById("a100")
+                    .classList.add("unlocked");
+            }
+
+            if (clicks >= 500) {
+                document.getElementById("a500")
+                    .classList.add("unlocked");
+            }
+        }
+
+
+        function randomEvent() {
+
+            const chance = Math.random();
+
+            if (chance < 0.04) {
+                showPopup(
+                    "💀 ERREUR CRITIQUE : quelqu'un a cliqué trop fort."
+                );
+            }
+
+            else if (chance < 0.08) {
+                showPopup(
+                    "🧠 Votre QI vient de prendre sa retraite."
+                );
+            }
+
+            else if (chance < 0.11) {
+                makeButtonRun();
+            }
+
+            else if (chance < 0.13) {
+                panicMode();
+            }
+        }
+
+
+        function showPopup(text) {
+
+            const popup = document.getElementById("popup");
+
+            popup.innerHTML = "<strong>" + text + "</strong>";
+
+            popup.classList.add("show");
+
+            setTimeout(() => {
+                popup.classList.remove("show");
+            }, 3500);
+        }
+
+
+        function makeButtonRun() {
+
+            const button = document.getElementById("fugitive");
+
+            button.style.display = "block";
+
+            moveButton();
+        }
+
+
+        function moveButton() {
+
+            const button = document.getElementById("fugitive");
+
+            const x =
+                Math.random() * (window.innerWidth - 150);
+
+            const y =
+                Math.random() * (window.innerHeight - 70);
+
+            button.style.left = x + "px";
+            button.style.top = y + "px";
+        }
+
+
+        function catchButton() {
+
+            document.getElementById("fugitive")
+                .style.display = "none";
+
+            showPopup(
+                "🎯 TU L'AS ATTRAPÉ ! Ça ne sert toujours à rien."
+            );
+        }
+
+
+        function panicMode() {
+
+            document.body.classList.add("panic");
+
+            showPopup(
+                "🚨 MODE PANIQUE ACTIVÉ 🚨"
+            );
+
+            setTimeout(() => {
+                document.body.classList.remove("panic");
+            }, 1500);
+        }
+
+
+        function secret() {
+
+            showPopup(
+                "👀 Tu as trouvé le secret. Malheureusement, il n'y a aucun secret."
+            );
+
+            document.body.style.background =
+                "linear-gradient(135deg, #000, #222)";
+        }
+
+
+        // Le bouton fugitif bouge quand on approche
+        document.getElementById("fugitive")
+            .addEventListener("mouseenter", moveButton);
+
+    </script>
+
+</body>
+</html>
+
